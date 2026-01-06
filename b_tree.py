@@ -4,6 +4,7 @@ class b_tree:
         self.data = data
         self.left = None
         self.right = None
+        self.next = None
 class binary_tree:
     def __init__(self,):
         self.queue = deque()
@@ -50,32 +51,97 @@ class binary_tree:
         self.invert_tree(root.right)
         root.left,root.right =  root.right, root.left
         return root
+    def construct_tree(self,preorder,inorder):#[3,9,20,15,7]
+        def build_tree(preorder,inorder):
+            if not preorder or not inorder:
+                return None
+            root = b_tree(preorder[0]) #root = 3 2.3left =9
+            mid = inorder.index(preorder[0])
+            root.left = self.construct_tree(preorder[1:mid+1],inorder[:mid])#[9],[9]
+            root.right = self.construct_tree(preorder[mid+1:],inorder[mid+1:])
+            return root
+        return build_tree(preorder,inorder)
+    def construct_post_in(self,postorder,inorder):
+        hashmap = {}
+        for i in range(len(inorder)):
+            if inorder[i] not in hashmap:
+                hashmap[inorder[i]] = i
+        def helper_fun(left,right):
+            if left > right:
+                return None
+            root = b_tree(postorder.pop())
+            index = hashmap[root.data]
+            root.right = helper_fun(index+1,right)
+            root.left = helper_fun(left,index-1)
+            return root 
+        return helper_fun(0,len(inorder)-1)
+    def display(self,root):
+        if root:
+            self.queue.append(root)
+        while self.queue:
+            temp=self.queue.popleft()
+            print(temp.data,end="->")
+            if temp.left:
+                self.queue.append(temp.left)
+            if temp.right:
+                self.queue.append(temp.right) 
         
     def level_order(self,root):
-        if root is not None:
+        if root:
             self.queue.append(root)
             while self.queue:
                 temp=self.queue.popleft()
-                print(temp.data,end="->")
+                if not temp.next:
+                    print(temp.data,"->","#")
+                else:
+                    print(temp.data,"->",temp.next.data)
                 if temp.left is not None:
                     self.queue.append(temp.left)
                 if temp.right is not None:
-                    self.queue.append(temp.right) 
+                    self.queue.append(temp.right)
+    def populating_next_right_pointers(self,root):
+        print(root.data)
+        self.queue.append(root)
+        self.queue.append(None)
+        while self.queue:
+            new_node = self.queue.popleft()
+            if new_node == None:
+                if not self.queue:
+                    break
+                self.queue.append(None)
+                continue
+            elif self.queue[0] == None:
+                new_node.next = None
+            elif self.queue[0] != None:
+                new_node.next = self.queue[0]
+            if new_node!=None:
+                if new_node.left:
+                    self.queue.append(new_node.left)
+                if new_node.right:
+                    self.queue.append(new_node.right)
+        return root
 obj = binary_tree()
-root = None
-# p=None
+# root = None
+# preorder = [9,15,7,20,3]
+# inorder = [9,3,15,20,7]
+# root_node=obj.construct_post_in(preorder,inorder)
+# print(obj.display(root_node))
+
+p=None
 # q=None
 # nodes_p = [1,2,3]
-# nodes_q = [1,1]
-tree_nodes = [1,2,2,3,4,4,3]
+# nodes = [1,2,3,4,5,7]
+tree_nodes = [1,2,3,4,5,7]
 for i in tree_nodes:
-    root = obj.insert_node_data(root,i)
-    # p = obj.implement_b_tree(p,i)
+    # root = obj.insert_node_data(root,i)
+    p = obj.implement_b_tree(p,i)
     # q = obj.implement_b_tree(q,i)
-print(obj.display(root))
+# print(obj.display(root))
 # print(obj.invert_tree(root))
-print(obj.display(root))
-print(obj.level_order(root))
+# print(obj.display(root))
+# print(obj.level_order(root))
 # print(obj.display(q))
 # print(obj.same_tree(p,q))
-# print(obj.dfs(root))
+obj.display(p)
+print(obj.populating_next_right_pointers(p))
+print(obj.level_order(p))
