@@ -4,7 +4,7 @@ class b_tree:
         self.data = data
         self.left = None
         self.right = None
-        self.next = None
+        # self.next = None
 class binary_tree:
     def __init__(self,):
         self.queue = deque()
@@ -120,6 +120,24 @@ class binary_tree:
                 if new_node.right:
                     self.queue.append(new_node.right)
         return root
+    def flatten_tree(self,root):
+        def tree_linked_list(root):
+            if not root:
+                return
+            left_node = tree_linked_list(root.left)
+            right_node = tree_linked_list(root.right)
+            if root.left:
+                left_node.right = root.right
+                root.right = root.left
+                root.left =None
+            start_node = left_node or right_node or root 
+            print(start_node.data)
+            return start_node
+        return tree_linked_list(root) 
+    def pri(self,root):
+        while root:
+            print(root.data)
+            root = root.right
 obj = binary_tree()
 # root = None
 # preorder = [9,15,7,20,3]
@@ -131,7 +149,7 @@ p=None
 # q=None
 # nodes_p = [1,2,3]
 # nodes = [1,2,3,4,5,7]
-tree_nodes = [1,2,3,4,5,7]
+tree_nodes = [1,2,3,4,5,6]
 for i in tree_nodes:
     # root = obj.insert_node_data(root,i)
     p = obj.implement_b_tree(p,i)
@@ -140,8 +158,10 @@ for i in tree_nodes:
 # print(obj.invert_tree(root))
 # print(obj.display(root))
 # print(obj.level_order(root))
-# print(obj.display(q))
+print(obj.display(p))
 # print(obj.same_tree(p,q))
-obj.display(p)
-print(obj.populating_next_right_pointers(p))
-print(obj.level_order(p))
+# obj.display(p)
+# print(obj.populating_next_right_pointers(p))
+# print(obj.level_order(p))
+print(obj.flatten_tree(p))
+print(obj.pri(p))
