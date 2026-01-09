@@ -24,7 +24,7 @@ class binary_tree:
         elif not root.right:
             root.right = self.implement_b_tree(root.right,data)
         else:
-            root.left = self.implement_b_tree(root.left,data)
+            self.implement_b_tree(root.left,data)
         return root
     def display(self,root):
         if not root:
@@ -138,6 +138,42 @@ class binary_tree:
         while root:
             print(root.data)
             root = root.right
+    def path_sum(self,root,target_sum):
+        curr_sum = 0
+        def find_path(root,curr_sum):
+            if not root:
+                return False 
+            curr_sum+=root.data
+            if curr_sum == target_sum:
+                return True
+            return find_path(root.left,curr_sum) or find_path(root.right,curr_sum)
+        return find_path(root,curr_sum)
+    curr_sum = 0
+    total_sum =0
+    def sum_root_to_leaf(self,root):
+        if not root:
+            return None 
+        self.curr_sum = self.curr_sum*10 + root.data
+        if not root.left and not root.right:
+            self.total_sum += self.curr_sum
+            print(self.total_sum)
+        self.sum_root_to_leaf(root.left)
+        self.sum_root_to_leaf(root.right)
+        self.curr_sum = self.curr_sum//10
+        return self.total_sum
+    max_sum = float('-inf')
+    def maximum_path_sum(self,root):
+        def dfs(root):
+            if not root:
+                return 0
+            left_sum = max(0,dfs(root.left))
+            right_sum = max(0,(dfs(root.right)))
+            curr_sum = root.data+left_sum+right_sum
+            self.max_sum = max(curr_sum,self.max_sum)
+            return root.data+max(left_sum,right_sum)
+        dfs(root)
+        return self.max_sum
+        
 obj = binary_tree()
 # root = None
 # preorder = [9,15,7,20,3]
@@ -149,7 +185,7 @@ p=None
 # q=None
 # nodes_p = [1,2,3]
 # nodes = [1,2,3,4,5,7]
-tree_nodes = [1,2,3,4,5,6]
+tree_nodes = [1,2,3]
 for i in tree_nodes:
     # root = obj.insert_node_data(root,i)
     p = obj.implement_b_tree(p,i)
@@ -159,9 +195,12 @@ for i in tree_nodes:
 # print(obj.display(root))
 # print(obj.level_order(root))
 print(obj.display(p))
+# print(obj.path_sum(p,22))
+# print(obj.sum_root_to_leaf(p))
+print(obj.maximum_path_sum(p))
 # print(obj.same_tree(p,q))
 # obj.display(p)
 # print(obj.populating_next_right_pointers(p))
 # print(obj.level_order(p))
-print(obj.flatten_tree(p))
-print(obj.pri(p))
+# print(obj.flatten_tree(p))
+# print(obj.pri(p))
